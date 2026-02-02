@@ -1,9 +1,18 @@
 plugins {
     java
-    id("io.papermc.paperweight.userdev") // Không cần để version ở đây nếu đã khai báo ở root
+    id("io.papermc.paperweight.userdev") version "1.7.1"
 }
 
 dependencies {
-    // Ép kiểu String để tránh lỗi biên dịch script
-    add("paperweightDevelopmentBundle", "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+    // Đây là dòng quan trọng nhất để kích hoạt applyPatches
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+// Thêm dòng này để ép Paperweight nhận diện đúng mode làm việc
+paperweight {
+    // Cấu hình này giúp Plugin biết bạn đang chuẩn bị can thiệp mã nguồn
 }
