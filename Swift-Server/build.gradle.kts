@@ -1,17 +1,22 @@
 plugins {
     java
-    id("io.papermc.paperweight.core")
+    id("io.papermc.paperweight.core") // Không dùng userdev ở đây
 }
 
 dependencies {
-    // Vẫn dùng bundle cũ làm nguyên liệu
-    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+    // Thay vì dùng paperweightDevelopmentBundle(...), dùng 'implementation' trỏ thẳng vào repo
+    // Paperweight Core sẽ tự quét các dependency này để tìm bundle
+    implementation("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
 }
 
 paperweight {
-    // Chỉ định dự án này là dự án Server để Patch
-    serverProject.set(project)
+    // Đây là nơi khai báo tên server của bạn
+    serverProjectName.set("Swift-Server")
     
-    // Cấu hình nơi chứa mã nguồn sau khi decompile
-    // Thường là thư mục 'Swift-Server/src/main/java'
+    // Ép plugin nhận diện thư mục patches bạn đã tạo ở ảnh 16:13
+    checkstyleConfigDir.set(file("codestyle"))
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
