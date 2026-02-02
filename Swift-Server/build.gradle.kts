@@ -1,13 +1,9 @@
 plugins {
     java
-    id("io.papermc.paperweight.userdev")
+    id("io.papermc.paperweight.userdev") // Không cần để version ở đây nếu đã khai báo ở root
 }
 
 dependencies {
-    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+    // Ép kiểu String để tránh lỗi biên dịch script
+    add("paperweightDevelopmentBundle", "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
 }
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
-
