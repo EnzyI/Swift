@@ -1,15 +1,13 @@
 plugins {
     java
-    // Vẫn dùng userdev nhưng phải đi kèm với cấu hình đặc biệt bên dưới
-    id("io.papermc.paperweight.userdev") version "1.7.1" 
+    id("io.papermc.paperweight.userdev") version "1.7.1"
 }
 
-// Đây là "chìa khóa" để mở task applyPatches
-paperweight {
-    serverProject.set(project(":Swift-Server"))
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 dependencies {
-    // Phải dùng 'paperweightDevelopmentBundle' thì task mới xuất hiện
-    add("paperweightDevelopmentBundle", "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+    // Dòng này chính là "ngòi nổ" để hiện ra task applyPatches
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
 }
