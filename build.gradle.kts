@@ -13,27 +13,26 @@ allprojects {
     }
 }
 
-// Cấu hình riêng cho Swift-Server - Đây là nơi "phẫu thuật"
+// Cấu hình cho Module Server - Dùng cách gọi này để tránh lỗi Unresolved
 project(":Swift-Server") {
     apply(plugin = "java")
     apply(plugin = "io.papermc.paperweight.userdev")
 
-    java {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    // Sử dụng block 'the' để truy cập trực tiếp vào extension của Paperweight
+    configure<io.papermc.paperweight.userdev.ReobfExtension> {
+        // Cấu hình nếu cần, tạm thời để trống
     }
 
     dependencies {
-        // Phải đặt trong block dependencies của module đã apply plugin paperweight
-        paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+        // Dùng chuỗi string trực tiếp để "vượt mặt" lỗi check cú pháp của Kotlin
+        "paperweightDevelopmentBundle"("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
     }
 
-    tasks.withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.compilerArgs.addAll(listOf("--add-modules", "jdk.incubator.vector"))
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
-// Cấu hình cho API
 project(":Swift-API") {
     apply(plugin = "java")
     java {
