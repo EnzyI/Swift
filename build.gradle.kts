@@ -1,7 +1,6 @@
 plugins {
     java
-    // Nạp plugin vào classpath nhưng chưa apply ở root
-    id("io.papermc.paperweight.userdev") version "1.7.1" apply false
+    id("io.papermc.paperweight.userdev") version "1.2.0" apply false // Hạ phiên bản xuống bản ổn định hơn
 }
 
 allprojects {
@@ -14,26 +13,16 @@ allprojects {
     }
 }
 
-// Cấu hình riêng cho Swift-Server
 project(":Swift-Server") {
     apply(plugin = "java")
     apply(plugin = "io.papermc.paperweight.userdev")
 
-    // Sử dụng 'configure' kiểu này để tránh lỗi Unresolved khi nạp lần đầu
-    extensions.configure<io.papermc.paperweight.userdev.ReobfExtension> {
-        // Tạm để trống
-    }
-
-    dependencies {
-        // Dùng hàm 'add' để né lỗi kiểm tra kiểu dữ liệu của Kotlin DSL
-        add("paperweightDevelopmentBundle", "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
-    }
-
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     }
-}
 
-project(":Swift-API") {
-    apply(plugin = "java")
+    dependencies {
+        // Dùng 'add' để vượt qua bước kiểm tra cú pháp của Kotlin DSL
+        add("paperweightDevelopmentBundle", "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+    }
 }
