@@ -1,15 +1,14 @@
 plugins {
     java
-    id("io.papermc.paperweight.userdev") version "1.7.1"
+    id("io.papermc.paperweight.patcher") version "1.7.1"
 }
 
-
+// Đây là block bắt buộc để kích hoạt applyPatches
+patcher {
+    parent.set(project.rootProject)
+}
 
 dependencies {
-    // Đây là dòng duy nhất kích hoạt việc giải mã Minecraft để làm Fork
-    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
-}
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    // Dùng bundle này để làm nguyên liệu vá (patch)
+    add("paperweightDevelopmentBundle", "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
 }
