@@ -13,9 +13,10 @@ allprojects {
     }
 
     tasks.withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        
-        options.compilerArgs.addAll(listOf("--add-modules", "jdk.incubator.vector"))
-    }
+    options.compilerArgs.addAll(listOf(
+        "--add-modules", "jdk.incubator.vector",
+        "-XX:+UnlockExperimentalVMOptions",
+        "-XX:+EnableVectorReboxing",
+        "-XX:+EnableVectorAggressiveReboxing"
+    ))
 }
-
