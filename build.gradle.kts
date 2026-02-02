@@ -1,6 +1,6 @@
 plugins {
     java
-    id("io.papermc.paperweight.userdev") version "1.2.0" apply false // Hạ phiên bản xuống bản ổn định hơn
+    id("io.papermc.paperweight.userdev") version "1.7.3" apply false // Hạ phiên bản xuống bản ổn định hơn
 }
 
 allprojects {
@@ -26,3 +26,4 @@ project(":Swift-Server") {
         add("paperweightDevelopmentBundle", "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
     }
 }
+
