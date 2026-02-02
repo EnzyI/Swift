@@ -1,24 +1,29 @@
 plugins {
     java
+    // Kích hoạt plugin paperweight ở dự án gốc
     id("io.papermc.paperweight.userdev") version "1.7.1"
 }
 
-group = "com.swift.server"
-version = "1.0.0-SNAPSHOT"
+// Cấu hình cho dự án Server - nơi các task của paperweight sẽ xuất hiện
+project(":Swift-Server") {
+    apply(plugin = "java")
+    apply(plugin = "io.papermc.paperweight.userdev")
 
-repositories {
-    mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/")
-}
-
-dependencies {
-    // Đây là nơi định nghĩa phiên bản Minecraft làm nền tảng (Base)
-    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+    dependencies {
+        // Định nghĩa bản Minecraft nền tảng
+        paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+    }
 }
 
 allprojects {
-    apply(plugin = "java")
-    
+    group = "com.swift.server"
+    version = "1.0.0-SNAPSHOT"
+
+    repositories {
+        mavenCentral()
+        maven("https://repo.papermc.io/repository/maven-public/")
+    }
+
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     }
