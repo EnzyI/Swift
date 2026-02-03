@@ -5,7 +5,7 @@ plugins {
     id("io.papermc.paperweight.core") version "1.7.1"
 }
 
-// CHIẾN THUẬT: Lazy Injection - Tự động nạp khi thấy phễu xuất hiện
+// CHIẾN THUẬT: Nạp đạn kiểu Kotlin DSL chuẩn
 val bundle = "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT"
 val targetConfigs = listOf(
     "paperweightDevelopmentBundle", 
@@ -14,14 +14,13 @@ val targetConfigs = listOf(
     "paramMappings"
 )
 
-configurations.all {
-    if (targetConfigs.contains(name)) {
-        dependencies.add(name, bundle)
-        println(">>> [Swift-Server] Đã tìm thấy và nạp đạn cho: $name")
-    }
+// Đăng ký nạp dependency khi configuration xuất hiện
+targetConfigs.forEach { configName ->
+    configurations.maybeCreate(configName) // Ép tạo nếu chưa có để tránh lỗi 'not found'
+    dependencies.add(configName, bundle)
 }
 
-// GIỮ NGUYÊN HẮC THUẬT REPO (Đã quá ổn định rồi)
+// GIỮ NGUYÊN HẮC THUẬT REPO (Đã hoạt động tốt)
 val paperweight = extensions.getByName("paperweight")
 val repoUrl = "https://repo.papermc.io/repository/maven-public/"
 paperweight::class.java.methods.forEach { method ->
@@ -29,6 +28,8 @@ paperweight::class.java.methods.forEach { method ->
         try {
             val prop = method.invoke(paperweight) as? Property<*>
             if (prop != null) {
+                // Dùng @Suppress để tắt cái warning 'Unchecked cast' bro thấy trong log
+                @Suppress("UNCHECKED_CAST")
                 (prop as Property<String>).set(repoUrl)
             }
         } catch (e: Exception) {}
