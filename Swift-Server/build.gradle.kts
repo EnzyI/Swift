@@ -3,25 +3,20 @@ plugins {
     id("io.papermc.paperweight.core") version "1.7.1"
 }
 
-// Tự định nghĩa các cấu hình mà Plugin Core yêu cầu
+// Định nghĩa cấu hình bắt buộc cho Core
 val paperweightDevelopmentBundle by configurations.creating
-val minecraftServer by configurations.creating
-val minecraftMappings by configurations.creating
 
 dependencies {
-    // 1. Bundle chứa nguyên liệu build
     paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
-    
-    // 2. Ép nạp server gốc để lấy Mappings (Fix lỗi trong log của bạn)
-    minecraftServer("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
 }
 
 paperweight {
-    // Khai báo repo chứa Mapping để sửa lỗi 'paramMappingsRepo'
-    serverProjectName.set("Swift-Server")
+    // Sử dụng cách gán giá trị trực tiếp để tránh lỗi "Unresolved reference"
+    projectName.set("Swift")
     
-    // Đây là dòng "cứu cánh" để fix lỗi property 'paramMappingsRepo'
-    paramMappingsRepo.set("https://maven.quiltmc.org/repository/release/")
+    // Fix lỗi 'paramMappingsRepo' từ file build_log.txt của bạn
+    // Chúng ta trỏ thẳng vào repo Maven của Paper để lấy Mapping
+    mappingsRepo.set("https://repo.papermc.io/repository/maven-public/")
 }
 
 java {
