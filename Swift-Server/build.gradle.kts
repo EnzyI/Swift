@@ -5,7 +5,6 @@ plugins {
     id("io.papermc.paperweight.core") version "1.7.1"
 }
 
-// Giữ nguyên phần dependencies đã đúng
 val paperweightDevelopmentBundle by configurations.creating
 val minecraftServer by configurations.creating
 val minecraftMappings by configurations.creating
@@ -17,20 +16,33 @@ dependencies {
     minecraftMappings(bundle)
 }
 
-// HẮC THUẬT V2: Truy cập qua Method thay vì Field để né Proxy
+// --- KHU VỰC HẮC THUẬT V3: TIÊM DIỆN RỘNG ---
 val paperweight = extensions.getByName("paperweight")
+val repoUrl = "https://repo.papermc.io/repository/maven-public/"
+
+// Danh sách các hàm Getter của những biến đang bị thiếu
+val targetMethods = listOf(
+    "getParamMappingsRepo", 
+    "getRemapRepo", 
+    "getReobfRepo", 
+    "getStartupRepo"
+)
+
+println(">>> [Swift-Server] Bắt đầu chiến dịch tiêm Repo...")
+
 paperweight::class.java.methods.forEach { method ->
-    if (method.name == "getParamMappingsRepo") {
+    if (targetMethods.contains(method.name)) {
         try {
+            // Ép kiểu và set giá trị cưỡng bức
             val prop = method.invoke(paperweight) as Property<String>
-            prop.set("https://repo.papermc.io/repository/maven-public/")
-            println(">>> [Swift-Server] Đã tiêm thành công qua Method!")
+            prop.set(repoUrl)
+            println(">>> [Swift-Server] Đã tiêm THÀNH CÔNG: ${method.name}")
         } catch (e: Exception) {
-            // Nếu không phải String, thử với URI
-            println(">>> [Swift-Server] Lỗi nhẹ khi tiêm: ${e.message}")
+            println(">>> [Swift-Server] Lỗi khi tiêm ${method.name}: ${e.message}")
         }
     }
 }
+// ---------------------------------------------
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
