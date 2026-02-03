@@ -3,20 +3,21 @@ plugins {
     id("io.papermc.paperweight.core") version "1.7.1"
 }
 
-// Định nghĩa cấu hình bắt buộc cho Core
+// Khai báo đúng các tên mà Plugin Core tìm kiếm ngầm
 val paperweightDevelopmentBundle by configurations.creating
+val minecraftServer by configurations.creating
+val minecraftMappings by configurations.creating
 
 dependencies {
-    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+    // Nạp bundle vào cả 3 cấu hình để Plugin không thể kêu thiếu Mapping
+    val bundle = "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT"
+    paperweightDevelopmentBundle(bundle)
+    minecraftServer(bundle)
+    minecraftMappings(bundle)
 }
 
 paperweight {
-    // Sử dụng cách gán giá trị trực tiếp để tránh lỗi "Unresolved reference"
-    projectName.set("Swift")
-    
-    // Fix lỗi 'paramMappingsRepo' từ file build_log.txt của bạn
-    // Chúng ta trỏ thẳng vào repo Maven của Paper để lấy Mapping
-    mappingsRepo.set("https://repo.papermc.io/repository/maven-public/")
+    // ĐỂ TRỐNG HOÀN TOÀN - Đây là chìa khóa để tránh lỗi Unresolved reference
 }
 
 java {
