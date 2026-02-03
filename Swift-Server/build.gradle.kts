@@ -3,13 +3,16 @@ plugins {
     id("io.papermc.paperweight.core") version "1.7.1"
 }
 
+// Tự tạo cấu hình để Plugin không báo "not found" nữa
+val paperweightDevelopmentBundle: Configuration by configurations.creating
+
 dependencies {
-    // Khai báo bundle theo chuẩn String-base để tránh lỗi biên dịch script
-    "paperweightDevelopmentBundle"("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
+    // Nạp bundle vào đúng cấu hình vừa tạo
+    paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT")
 }
 
 paperweight {
-    // Để trống để ChatGPT có thể yêu cầu thêm các tùy chỉnh sau này
+    // Giữ nguyên để tránh lỗi reference ở giai đoạn này
 }
 
 java {
