@@ -13,12 +13,13 @@ val targetConfigs = listOf(
     "paramMappings"
 )
 
+// Tự động nạp bundle vào mọi phễu tiềm năng
 targetConfigs.forEach { configName ->
     configurations.maybeCreate(configName)
     dependencies.add(configName, bundle)
 }
 
-// HẮC THUẬT REPO (Giữ nguyên)
+// HẮC THUẬT REPO (Đã quá chuẩn rồi)
 val paperweight = extensions.getByName("paperweight")
 val repoUrl = "https://repo.papermc.io/repository/maven-public/"
 paperweight::class.java.methods.forEach { method ->
@@ -33,12 +34,11 @@ paperweight::class.java.methods.forEach { method ->
     }
 }
 
-// MỚI: ÉP THỨ TỰ CHẠY TASK
-// Đảm bảo task bung bundle phải chạy TRƯỚC khi task filter đòi dữ liệu
-tasks.withType<org.gradle.api.Task>().configureEach {
-    if (name == "filterSpigotExcludes") {
-        dependsOn(":Swift-Server:setupPaperweightVisualStudioCode") 
-        // Hoặc các task extract mặc định của paperweight nếu có
+// ÉP MỌI TASK PHẢI ĐỢI BUNDLE TẢI XONG
+tasks.configureEach {
+    if (group?.contains("paperweight", ignoreCase = true) == true) {
+        // Mọi task thuộc nhóm paperweight đều cần dữ liệu từ bundle
+        dependsOn(configurations.getByName("paperweightDevelopmentBundle"))
     }
 }
 
