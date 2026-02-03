@@ -5,7 +5,7 @@ plugins {
     id("io.papermc.paperweight.core") version "1.7.1"
 }
 
-// 1. Định nghĩa các cấu hình (Phần này đã đúng, giữ nguyên)
+// Giữ nguyên phần dependencies đã đúng
 val paperweightDevelopmentBundle by configurations.creating
 val minecraftServer by configurations.creating
 val minecraftMappings by configurations.creating
@@ -17,21 +17,19 @@ dependencies {
     minecraftMappings(bundle)
 }
 
-// 2. HẮC THUẬT: Dùng Reflection để set giá trị 'paramMappingsRepo'
-// Bỏ qua Paperweight DSL, ta chọc thẳng vào field ẩn của nó.
-try {
-    val paperweight = extensions.getByName("paperweight")
-    // Tìm biến tên là 'paramMappingsRepo' như trong log lỗi của bạn
-    val field = paperweight.javaClass.getDeclaredField("paramMappingsRepo")
-    field.isAccessible = true // Mở khóa truy cập
-    
-    // Ép kiểu về Property<String> và set giá trị
-    val prop = field.get(paperweight) as Property<String>
-    prop.set("https://repo.papermc.io/repository/maven-public/")
-    
-    println(">>> [Swift-Server] Đã tiêm 'paramMappingsRepo' thành công!")
-} catch (e: Exception) {
-    println(">>> [Swift-Server] Cảnh báo: Không thể tiêm giá trị: ${e.message}")
+// HẮC THUẬT V2: Truy cập qua Method thay vì Field để né Proxy
+val paperweight = extensions.getByName("paperweight")
+paperweight::class.java.methods.forEach { method ->
+    if (method.name == "getParamMappingsRepo") {
+        try {
+            val prop = method.invoke(paperweight) as Property<String>
+            prop.set("https://repo.papermc.io/repository/maven-public/")
+            println(">>> [Swift-Server] Đã tiêm thành công qua Method!")
+        } catch (e: Exception) {
+            // Nếu không phải String, thử với URI
+            println(">>> [Swift-Server] Lỗi nhẹ khi tiêm: ${e.message}")
+        }
+    }
 }
 
 java {
