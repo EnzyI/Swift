@@ -16,33 +16,28 @@ dependencies {
     minecraftMappings(bundle)
 }
 
-// --- KHU VỰC HẮC THUẬT V3: TIÊM DIỆN RỘNG ---
+// --- CHIẾN DỊCH TẬN DIỆT V4 ---
 val paperweight = extensions.getByName("paperweight")
 val repoUrl = "https://repo.papermc.io/repository/maven-public/"
 
-// Danh sách các hàm Getter của những biến đang bị thiếu
-val targetMethods = listOf(
-    "getParamMappingsRepo", 
-    "getRemapRepo", 
-    "getReobfRepo", 
-    "getStartupRepo"
-)
-
-println(">>> [Swift-Server] Bắt đầu chiến dịch tiêm Repo...")
+println(">>> [Swift-Server] Đang quét và tiêu diệt các Repo trống...")
 
 paperweight::class.java.methods.forEach { method ->
-    if (targetMethods.contains(method.name)) {
+    // Quét tất cả các Method Getter có chữ "Repo" ở cuối
+    if (method.name.startsWith("get") && method.name.endsWith("Repo")) {
         try {
-            // Ép kiểu và set giá trị cưỡng bức
-            val prop = method.invoke(paperweight) as Property<String>
-            prop.set(repoUrl)
-            println(">>> [Swift-Server] Đã tiêm THÀNH CÔNG: ${method.name}")
+            val prop = method.invoke(paperweight) as? Property<*>
+            if (prop != null) {
+                // Ép kiểu sang String property và set giá trị
+                (prop as Property<String>).set(repoUrl)
+                println(">>> [Swift-Server] Đã khóa mục tiêu: ${method.name}")
+            }
         } catch (e: Exception) {
-            println(">>> [Swift-Server] Lỗi khi tiêm ${method.name}: ${e.message}")
+            // Bỏ qua nếu không phải Property<String>
         }
     }
 }
-// ---------------------------------------------
+// ------------------------------
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
