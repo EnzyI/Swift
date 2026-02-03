@@ -5,21 +5,25 @@ plugins {
     id("io.papermc.paperweight.core") version "1.7.1"
 }
 
-// 1. Nạp "nguyên liệu" vào các phễu có sẵn của Plugin
-dependencies {
-    val bundle = "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT"
-    
-    // Dùng 'implementation' hoặc tên gốc để nạp vào các configuration mà Plugin tự tạo
-    "paperweightDevelopmentBundle"(bundle)
-    "minecraftServer"(bundle)
-    "minecraftMappings"(bundle)
-    "paramMappings"(bundle)
+// CHIẾN THUẬT: Lazy Injection - Tự động nạp khi thấy phễu xuất hiện
+val bundle = "io.papermc.paper:dev-bundle:1.20.4-R0.1-SNAPSHOT"
+val targetConfigs = listOf(
+    "paperweightDevelopmentBundle", 
+    "minecraftServer", 
+    "minecraftMappings", 
+    "paramMappings"
+)
+
+configurations.all {
+    if (targetConfigs.contains(name)) {
+        dependencies.add(name, bundle)
+        println(">>> [Swift-Server] Đã tìm thấy và nạp đạn cho: $name")
+    }
 }
 
-// 2. GIỮ NGUYÊN HẮC THUẬT QUÉT REPO (Đã hoạt động ở ảnh 19:07)
+// GIỮ NGUYÊN HẮC THUẬT REPO (Đã quá ổn định rồi)
 val paperweight = extensions.getByName("paperweight")
 val repoUrl = "https://repo.papermc.io/repository/maven-public/"
-
 paperweight::class.java.methods.forEach { method ->
     if (method.name.startsWith("get") && method.name.endsWith("Repo")) {
         try {
